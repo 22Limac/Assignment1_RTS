@@ -77,3 +77,24 @@ int setDay(int validYear, int month, int leap, int day)
     if(valid){return BOUNDARY_CHECK(day,daysInMonth[month][leap]);}
     return valid;
 }
+
+void updateDay(void)
+{
+    currentDate.day = (currentDate.day<daysInMonth[currentDate.month][LEAPYEAR(currentDate.year)]) ?
+                       currentDate.day+1 : RESET;
+    if(!(currentDate.day)){updateMonth();}
+}
+
+void updateMonth(void)
+{
+    currentDate.month = (currentDate.month<MONTHS_IN_YEAR) ?
+                         currentDate.month+1 : RESET;
+        if(!(currentDate.month)){updateMonth();}
+}
+
+void updateYear(void)
+{
+    currentDate.year = (currentDate.year<MAX_YEAR) ?
+                        currentDate.year+1 : RESET;
+}
+
