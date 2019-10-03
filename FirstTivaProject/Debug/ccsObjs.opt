@@ -1,0 +1,1 @@
+"./CommandTable.obj" "./Date.obj" "./HoldingBuffer.obj" "./Queue.obj" "./SysTick.obj" "./Time.obj" "./UART.obj" "./Utilities.obj" "./VT100.obj" "./main.obj" "./tm4c1294ncpdt_startup_ccs.obj" "../tm4c1294ncpdt.cmd" -llibc.a 
