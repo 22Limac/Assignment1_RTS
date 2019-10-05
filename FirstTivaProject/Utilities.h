@@ -25,12 +25,13 @@
     extern void printChar(char);
     extern void printString(char*);
     extern void spaceFilter(char*);
+    extern int myAtoi(int *, char*);
 
 #else
 
-    void InterruptMasterEnable(void);
     void printChar(char);
     void printString(char*);
     void spaceFilter(char*);
+    int myAtoi(int *, char*);
 
 #endif /* UTILITIES */

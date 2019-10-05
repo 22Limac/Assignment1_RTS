@@ -56,18 +56,18 @@ void main (void)
                     {
 
                         printString("\n\r>");
-                    }else
+                    }
+                    else
                     {
-                        printChar('?');
-                        printString("\n\r>");
+                        printString("\n\r?\n\r>");
                     }
                     break;
                 case BS:
-                    if(remove()){printChar(BS);}
+                    if(remove()){printString("\b \b");}
                     break;
                 default:
                     enqueue(OUTPUT,inData);
-                    add(tolower(inData.data));
+                    add(toupper(inData.data));
                 }
                 break;
             case SYSTICK:

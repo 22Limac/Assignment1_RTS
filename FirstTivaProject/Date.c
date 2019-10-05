@@ -12,7 +12,7 @@
 #include "Date.h"
 
 #define MONTHS_IN_YEAR 12
-#define MONTH_STRING 3
+#define MONTH_STRING 4
 #define ACCOUNT_LEAP 2
 #define VALID_DATE 3
 #define MAX_YEAR 9999
@@ -20,7 +20,7 @@
 #define LEAPYEAR(YEAR) (YEAR%400||((YEAR%4)&&!(YEAR%100)))
 
 const char monthStrings[MONTHS_IN_YEAR][MONTH_STRING] =
-{{"Jan"},{"Feb"},{"Mar"},{"Apr"},{"May"},{"Jun"},{"Jul"},{"Aug"},{"Sep"},{"Oct"},{"Nov"},{"Dec"}};
+{{"JAN"},{"FEB"},{"MAR"},{"APR"},{"MAY"},{"JUN"},{"JUL"},{"AUG"},{"SEP"},{"OCT"},{"NOV"},{"DEC"}};
 
 const int daysInMonth[MONTHS_IN_YEAR][ACCOUNT_LEAP] =
 {{31,31},{28,29},{31,31},{30,30},{31,31},{30,30},{31,31},{31,31},{30,30},{31,31},{30,30},{31,31}};
@@ -66,7 +66,7 @@ int setDate(char* cmd)
 int monthNumber(char* str, int* month )
 {
     int i = 0;
-    while(strncmp(str,monthStrings[i],MONTH_STRING)&&i<MONTHS_IN_YEAR){i++;}
+    while(strncmp(str,monthStrings[i],MONTH_STRING-1)&&(i<MONTHS_IN_YEAR)){i++;}
     *month = i;
     return i;
 }

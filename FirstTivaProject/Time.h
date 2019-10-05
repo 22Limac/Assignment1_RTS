@@ -18,8 +18,7 @@
     void updateSeconds(void);
     void updateMinutes(void);
     void updateHours(void);
-    void displayTime(int,char*);
+    void formatTime(int,char*);
     void printTime(void);
-    int  myAtoi(int * num, char* str);
 
 #endif //GLOBAL_TIME

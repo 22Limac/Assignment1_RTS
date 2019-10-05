@@ -17,7 +17,7 @@
 #define AST 0x2a
 /* Globals */
 
-volatile interruptType Data = {UART,NUL};
+interruptType Data = {UART,NUL};
 
 void UART0_Init(void)
 {

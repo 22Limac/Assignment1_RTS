@@ -22,7 +22,7 @@ int add(char c)
 
 int remove(void)
 {
-    if(holdingBuf.writePtr>-1)
+    if(holdingBuf.writePtr>0)
     {
             holdingBuf.writePtr--;
             return 1;

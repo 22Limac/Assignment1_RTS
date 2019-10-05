@@ -13,6 +13,7 @@
 #include    <stdio.h>
 #include    <ctype.h>
 #include    "Utilities.h"
+#include    "Date.h"
 #define     GLOBAL_TIME
 #include    "Time.h"
 
@@ -56,6 +57,7 @@ void updateMinutes(void)
 void updateHours(void)
 {
     time[HOURS] = (time[HOURS]<HOURS_UPDATE_LIMIT) ? time[HOURS]+1 : RESET;
+    if(!(time[HOURS])){updateDay();}
 }
 
 
@@ -74,13 +76,13 @@ int setTime(char* cmd)
     {
         cmd = strtok(cmd,":.");
         strcpy(timeSplit,cmd);
-        valid = myAtoi(tmpTime[HOURS],timeSplit);
+        valid = myAtoi(&tmpTime[HOURS],timeSplit);
         int i = MINUTES;
         while((i<PRECISION)&&valid)
         {
             cmd = strtok(NULL,":.");
             strcpy(timeSplit,cmd);
-            valid = myAtoi(tmpTime[i++],timeSplit);
+            valid = myAtoi(&tmpTime[i++],timeSplit);
         }
 /* check all values are:
  *                        1. valid digit characters
@@ -94,15 +96,14 @@ int setTime(char* cmd)
 
     if(!(valid)){return valid;}
     //validity criteria met; set time
-    i = 0;
-    while(i<PRECISION){time[i]=tmpTime[i++];}
+    for(i=0;i<PRECISION;i++){time[i]=tmpTime[i];}
     }
 
     printTime();
     return valid;
 }
 
-void displayTime(int val, char* rtn)
+void formatTime(int val, char* rtn)
 {
     if(val<TWO_DIGITS)//only values less than ten have zeros added to the tens placement
     {
@@ -121,23 +122,13 @@ char tmp[20];
 
 int i = 0;
 
-while(i<TIME_STRING){displayTime(time[i],digitRtn[i++]);}//check for missing zeros
+while(i<TIME_STRING){formatTime(time[i],digitRtn[i++]);}//check for missing zeros
 
 sprintf(tmp,"\n\r%s:%s:%s.%d",digitRtn[HOURS],digitRtn[MINUTES],digitRtn[SECONDS],time[TENTHS]);
 
 printString(tmp);
 }
 
-int myAtoi(int * num, char* str)
-{
-    char* tmp = str;
-    while(*tmp)
-    {
-        if(!isdigit(*(tmp++))){return FAILURE;}
-    }
-    *num = atoi(str);
-    return SUCESS;
-}
 
 
 

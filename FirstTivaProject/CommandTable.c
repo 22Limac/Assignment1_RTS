@@ -13,9 +13,9 @@
 
 command commandTable[NUMBER_OF_COMMANDS] =
 {
-                                           {"time",4,setTime},
-                                           {"date",4,setDate},
-                                           {0}
+                                           {"TIME",4,setTime},
+                                           {"DATE",4,setDate},
+                                           {"ALARM", 5, 0}
 };
 
 int process(char* cmd)
