@@ -2,70 +2,93 @@
  * @file    Time.c
  * @brief   Contains all significant time setting, updating and displaying functionality.
  *          including argument processing, output string formatting and validity checking.
- *          Contains constant definitions only required buy this module.
+ *          Contains constant definitions only required by this module.
  * @author  Liam JA MacDonald
  * @date    23-Sep-2019 (created)
- * @date    3-Oct-2019 (modified)
+ * @date    6-Oct-2019 (modified)
  */
 
 #include    <string.h>
 #include    <stdlib.h>
 #include    <stdio.h>
 #include    <ctype.h>
-#include    "Utilities.h"
 #include    "Date.h"
+#include    "Alarm.h"
 #define     GLOBAL_TIME
 #include    "Time.h"
 
 //Limit Constants
-#define TENTHS_LIMIT    10                      //max set value
 #define TENTHS_UPDATE_LIMIT     9               //max update value before reset
-#define SECONDS_MINUTES_LIMIT   60
 #define SECONDS_MINUTES_UPDATE_LIMIT    59
-#define HOURS_LIMIT     24
 #define HOURS_UPDATE_LIMIT      23
-//Misc. Time Constants
-#define HOURS       0                           //time array positions
-#define MINUTES     1
-#define SECONDS     2
-#define TENTHS      3
-#define TWO_DIGITS  10                          //two digit number musn't be formatted
-#define PRECISION   4                           //clock has 4 degrees of precision
-#define TIME_STRING     3                       //bytes for time strings when displayed
 
 
-int time[PRECISION] = {0,0,0,0};
 
+int time[PRECISION] = {RESET,RESET,RESET,RESET}; // used for storing current time
+
+/*
+ * @brief   Increments tenths of a second time value
+ * @details Increments tenths of a second value in
+ *          the time array. If it's exceeded it's max
+ *          value updateSeconds function is called.
+ *          calls alarmCheck function from Alarm.c module
+ *
+ */
 void updateTenths(void)
 {
-   time[TENTHS] = (time[TENTHS]<TENTHS_UPDATE_LIMIT) ? time[TENTHS]+1 : RESET;
-   if(!(time[TENTHS])){updateSeconds();}
+   UPDATE(time[TENTHS],TENTHS_UPDATE_LIMIT,updateSeconds())
+   alarmCheck();
 }
 
+/*
+ * @brief   Increments seconds time value
+ * @details Increments the seconds value in
+ *          the time array. If it's exceeded it's max
+ *          value updateMinutes function is called.
+ */
 void updateSeconds(void)
 {
-    time[SECONDS] = (time[SECONDS]<SECONDS_MINUTES_UPDATE_LIMIT) ? time[SECONDS]+1 : RESET;
-    if(!(time[SECONDS])){updateMinutes();}
+    UPDATE(time[SECONDS],SECONDS_MINUTES_UPDATE_LIMIT,updateMinutes())
 }
 
+/*
+ * @brief   Increments minutes time value
+ * @details Increments the minutes value in
+ *          the time array. If it's exceeded it's max
+ *          value updateHours function is called.
+ */
 void updateMinutes(void)
 {
-    time[MINUTES] = (time[MINUTES]<SECONDS_MINUTES_UPDATE_LIMIT) ? time[MINUTES]+1 : RESET;
-    if(!(time[MINUTES])){updateHours();}
+    UPDATE(time[MINUTES],SECONDS_MINUTES_UPDATE_LIMIT,updateHours())
 }
-
+/*
+ * @brief   Increments hours time value
+ * @details Increments the hours value in
+ *          the time array. If it's exceeded it's max
+ *          value updateDays function is called.
+ */
 void updateHours(void)
 {
-    time[HOURS] = (time[HOURS]<HOURS_UPDATE_LIMIT) ? time[HOURS]+1 : RESET;
-    if(!(time[HOURS])){updateDay();}
+    UPDATE(time[HOURS],HOURS_UPDATE_LIMIT,updateDay())
 }
 
-
+/*
+ * @brief   sets or displays current time
+ * @param   [in] cmd: string containing the arguments for the command
+ * @return  int return used as a boolean value,
+ *          if returns 1 the command was successful;
+ *          if 0 it failed
+ * @details if cmd string is null the current time is displayed
+ *          otherwise, the string is passed to parseClock in Utilities.c module
+ *          validity of each time value is checked; FAILURE is returned if not valid
+ *          the current time array is populated
+ *          new current time printed to screen
+ *
+ */
 int setTime(char* cmd)
 {
     int valid = TRUE;
-    int tmpTime[PRECISION] = {0,0,0,0};
-    char timeSplit[TIME_STRING];
+    int tmpTime[PRECISION] = {RESET,RESET,RESET,RESET};
 
     spaceFilter(cmd);                               //get rid of white space; stated in specifications
 /*  if:
@@ -74,59 +97,24 @@ int setTime(char* cmd)
  */
     if(*cmd)
     {
-        cmd = strtok(cmd,":.");
-        strcpy(timeSplit,cmd);
-        valid = myAtoi(&tmpTime[HOURS],timeSplit);
-        int i = MINUTES;
-        while((i<PRECISION)&&valid)
-        {
-            cmd = strtok(NULL,":.");
-            strcpy(timeSplit,cmd);
-            valid = myAtoi(&tmpTime[i++],timeSplit);
-        }
 /* check all values are:
  *                        1. valid digit characters
  *                        2. within specified limits
  */
-    valid =(valid&&
-            BOUNDARY_CHECK(tmpTime[TENTHS],TENTHS_LIMIT)&&
-            BOUNDARY_CHECK(tmpTime[SECONDS],SECONDS_MINUTES_LIMIT)&&
-            BOUNDARY_CHECK(tmpTime[MINUTES],SECONDS_MINUTES_LIMIT)&&
-            BOUNDARY_CHECK(tmpTime[HOURS],HOURS_LIMIT));
+        valid =(parseClock(cmd,tmpTime)&&
+                BOUNDARY_CHECK(tmpTime[TENTHS],TENTHS_LIMIT)&&
+                BOUNDARY_CHECK(tmpTime[SECONDS],SECONDS_MINUTES_LIMIT)&&
+                BOUNDARY_CHECK(tmpTime[MINUTES],SECONDS_MINUTES_LIMIT)&&
+                BOUNDARY_CHECK(tmpTime[HOURS],HOURS_LIMIT));
 
-    if(!(valid)){return valid;}
-    //validity criteria met; set time
-    for(i=0;i<PRECISION;i++){time[i]=tmpTime[i];}
+        if(!(valid)){return valid;}
+        //validity criteria met; set time
+        int i;
+        for(i=0;i<PRECISION;i++){time[i]=tmpTime[i];}
     }
-
-    printTime();
+    printString("\n\r");
+    printTime(time);
     return valid;
-}
-
-void formatTime(int val, char* rtn)
-{
-    if(val<TWO_DIGITS)//only values less than ten have zeros added to the tens placement
-    {
-        sprintf(rtn,"0%d",val);
-    }
-    else
-    {
-        sprintf(rtn,"%d",val);
-    }
-}
-
-void printTime(void)
-{
-char digitRtn[PRECISION-1][TIME_STRING];//precision - 1 because tenths dont need to be reformatted
-char tmp[20];
-
-int i = 0;
-
-while(i<TIME_STRING){formatTime(time[i],digitRtn[i++]);}//check for missing zeros
-
-sprintf(tmp,"\n\r%s:%s:%s.%d",digitRtn[HOURS],digitRtn[MINUTES],digitRtn[SECONDS],time[TENTHS]);
-
-printString(tmp);
 }
 
 

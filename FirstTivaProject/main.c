@@ -15,17 +15,6 @@
 #include "Utilities.h"
 #include "CommandTable.h"
 
-#define ENTER 0x0d
-#define BS 0x08
-#define NUL 0x00
-#define AST 0x2a
-#define INPUT 0
-#define OUTPUT 1
-
-void InterruptMasterEnable(void);
-void printChar(char);
-void printString(char*);
-
 void main (void)
 {
     interruptType inData ={NULL};
@@ -39,6 +28,7 @@ void main (void)
     enable();     // Enable Master (CPU) Interrupts
     char * cmd;
     printString("\n\r>");
+
     while(1)
     {
         /* Wait for input data */
@@ -51,19 +41,19 @@ void main (void)
                 switch(inData.data)
                 {
                 case ENTER:
-                    cmd = empty();
-                    if(process(cmd))
-                    {
 
-                        printString("\n\r>");
-                    }
-                    else
+                    cmd = empty();
+                    if(process(cmd)==FAILURE)
                     {
-                        printString("\n\r?\n\r>");
+                        printString("\n\r?");
                     }
+                    printString("\n\r>");
+
                     break;
                 case BS:
+
                     if(remove()){printString("\b \b");}
+
                     break;
                 default:
                     enqueue(OUTPUT,inData);

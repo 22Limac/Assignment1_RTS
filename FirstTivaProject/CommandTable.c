@@ -6,6 +6,7 @@
  */
 #include "Time.h"
 #include "Date.h"
+#include "Alarm.h"
 #include <string.h>
 #define GLOBAL_COMMANDTABLE
 #include "CommandTable.h"
@@ -15,7 +16,7 @@ command commandTable[NUMBER_OF_COMMANDS] =
 {
                                            {"TIME",4,setTime},
                                            {"DATE",4,setDate},
-                                           {"ALARM", 5, 0}
+                                           {"ALARM",5,setAlarm}
 };
 
 int process(char* cmd)

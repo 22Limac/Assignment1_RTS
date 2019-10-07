@@ -26,11 +26,27 @@ const int daysInMonth[MONTHS_IN_YEAR][ACCOUNT_LEAP] =
 {{31,31},{28,29},{31,31},{30,30},{31,31},{30,30},{31,31},{31,31},{30,30},{31,31},{30,30},{31,31}};
 
 date currentDate = {0,0,0};
+
+void updateDay(void)
+{
+    UPDATE(currentDate.day,
+           daysInMonth[currentDate.month][LEAPYEAR(currentDate.year)],
+           updateMonth())
+}
+
+void updateMonth(void)
+{
+    UPDATE(currentDate.month,MONTHS_IN_YEAR,updateYear())
+}
+
+void updateYear(void)
+{
+    currentDate.year = (currentDate.year<MAX_YEAR) ? currentDate.year+1 : RESET;
+}
 /*
  * @brief   called from CommandTable.c module to handle
  *          date commands both with and without arguments
- *
- * @param   string containing arguments in DD-MMM-YYYY
+ * @param   [in] cmd:string containing arguments in DD-MMM-YYYY
  *          format to set Date, or empty string to display
  *          date (whitespaces are allowed)
  */
@@ -43,16 +59,14 @@ int setDate(char* cmd)
 
     if(*cmd)
     {
-        valid = (sscanf(cmd,"%2d-%3s-%4d",&tmpDate.day,monthStr,&tmpDate.year)==VALID_DATE) ?//check that three vars were set
-                  setDay(BOUNDARY_CHECK(tmpDate.year, MAX_YEAR),//
+        //check that three vars were set
+        valid = (sscanf(cmd,"%2d-%3s-%4d",&tmpDate.day,monthStr,&tmpDate.year)==VALID_DATE) ?
+                  setDay(BOUNDARY_CHECK(tmpDate.year, MAX_YEAR),
                          monthNumber(monthStr,&tmpDate.month),
                          LEAPYEAR(tmpDate.year),
-                         tmpDate.day)
+                         tmpDate.day) : FALSE;
 
-                  :FALSE;
         if(!(valid)){return valid;}
-//        int i =0;
-//        while(i<VALID_DATE){*(currentDate+i)=*(tmpDate+i++);}
         currentDate.day =tmpDate.day;
         currentDate.month =tmpDate.month;
         currentDate.year = tmpDate.year;
@@ -78,23 +92,4 @@ int setDay(int validYear, int month, int leap, int day)
     return valid;
 }
 
-void updateDay(void)
-{
-    currentDate.day = (currentDate.day<daysInMonth[currentDate.month][LEAPYEAR(currentDate.year)]) ?
-                       currentDate.day+1 : RESET;
-    if(!(currentDate.day)){updateMonth();}
-}
-
-void updateMonth(void)
-{
-    currentDate.month = (currentDate.month<MONTHS_IN_YEAR) ?
-                         currentDate.month+1 : RESET;
-        if(!(currentDate.month)){updateMonth();}
-}
-
-void updateYear(void)
-{
-    currentDate.year = (currentDate.year<MAX_YEAR) ?
-                        currentDate.year+1 : RESET;
-}
 
