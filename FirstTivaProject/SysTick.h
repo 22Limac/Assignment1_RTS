@@ -1,9 +1,13 @@
 /*
- * SysTick.h
- *
- *  Created on: Sep 23, 2019
- *      Author: Liam MacDonald
+ * @file    SysTick.h
+ * @brief   SysTick Constant Register Declarations
+ *          SysTick constants
+ *          SysTick Function Prototypes
+ * @author  Liam JA MacDonald (Edited) Emad Khan (Original)
+ * @date    23-Sep-2019 (Created)
+ * @date    10-Oct-2019 (Modified)
  */
+
 // SysTick Registers
 // SysTick Control and Status Register (STCTRL)
 #pragma once
@@ -21,13 +25,10 @@
 // Maximum period
 #define MAX_WAIT           0x1000000   /* 2^24 */
 #define TENTH_WAIT         0x186A00 //(2^24)/10
-#define SYSTICK 1
 
 #ifndef GLOBAL_SYSTICK
 #define GLOBAL_SYSTICK
 
-    extern volatile int elapsed;
-    extern volatile char count;
     extern void SysTickStart(void);
     extern void SysTickStop(void);
     extern void SysTickPeriod(unsigned long);
@@ -35,15 +36,5 @@
     extern void SysTickIntDisable(void);
     extern void SysTickHandler(void);
 
-#else
-
-    volatile int elapsed;
-    volatile int count = 0;
-    void SysTickStart(void);
-    void SysTickStop(void);
-    void SysTickPeriod(unsigned long);
-    void SysTickIntEnable(void);
-    void SysTickIntDisable(void);
-    void SysTickHandler(void);
 
 #endif //GLOBAL_SYSTICK

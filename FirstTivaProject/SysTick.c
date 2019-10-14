@@ -1,33 +1,42 @@
 /*
- - SysTick sample code
- - Originally written for the Stellaris (2013)
- - Will need to use debugger to "see" interrupts
- - Code uses bit-operations to access SysTick bits
-*/
+ * @file    SysTick.c
+ * @brief   Contains initialization routines to set
+ *          a systick interrupt every tenth of a second.
+ *          Stop and Start functions. Definition of the
+ *          SysTick ISR
+ * @author  Liam JA MacDonald (Edited) Emad Khan (Original)
+ * @date    23-Sep-2019 (Created)
+ * @date    10-Oct-2019 (Modified)
+ */
+
 #define GLOBAL_SYSTICK
 #include "SysTick.h"
 #include "InterruptType.h"
 #include "Utilities.h"
 #include "Queue.h"
 
+/*SysTick interrupt buffer */
+static interruptType sysInt = {SYSTICK,NUL};
 
-#define TRUE 1
-#define FALSE 0
-/* Global to signal SysTick interrupt */
-interruptType sysInt = {SYSTICK,NUL};
-
+/*
+ * @brief   Set the clock source to internal and enable the counter to interrupt
+ */
 void SysTickStart(void)
 {
-// Set the clock source to internal and enable the counter to interrupt
 ST_CTRL_R |= ST_CTRL_CLK_SRC | ST_CTRL_ENABLE;  
 }
 
+/*
+ * @brief   Clear the enable bit to stop the counter
+ */
 void SysTickStop(void)
 {
-// Clear the enable bit to stop the counter
 ST_CTRL_R &= ~(ST_CTRL_ENABLE);  
 }
 
+/*
+ * @brief   Set interrupt period
+ */
 void SysTickPeriod(unsigned long Period)
 {
 /*
@@ -36,22 +45,28 @@ void SysTickPeriod(unsigned long Period)
 ST_RELOAD_R = Period - 1;  /* 1 to 0xff.ffff */
 }
 
+/*
+ * @brief   Enable Systick interrupts
+ */
 void SysTickIntEnable(void)
 {
 // Set the interrupt bit in STCTRL
 ST_CTRL_R |= ST_CTRL_INTEN;	
 }
 
+/*
+ * @brief   disable Systick interrupts
+ */
 void SysTickIntDisable(void)
 {
 // Clear the interrupt bit in STCTRL
 ST_CTRL_R &= ~(ST_CTRL_INTEN);	
 }	
 
-// global variable to count number of interrupts on PORTF0 (falling edge)
-
-
-
+/*
+ * @brief   SysTick ISR, enqueue a SysTick interrupt
+ *          in the INPUT queue
+ */
 void SysTickHandler(void)
 {
     enqueue(INPUT,sysInt);

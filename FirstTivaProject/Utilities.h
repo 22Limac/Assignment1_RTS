@@ -1,8 +1,10 @@
 /*
- * Utilities.h
- *
- *  Created on: Sep 29, 2019
- *      Author: Liam MacDonald
+ * @file    Utilities.h
+ * @brief   frequently used constants
+ *          Utilities.c function prototypes
+ * @author  Liam JA MacDonald
+ * @date    23-Sep-2019 (created)
+ * @date    10-Oct-2019 (modified)
  */
 #pragma     once
 #define     disable()   __asm(" cpsid i")
@@ -15,7 +17,7 @@
 #define     OUTPUT      1
 #define     TRUE        1
 #define     FALSE       0
-#define     SUCESS      1
+#define     SUCCESS      1
 #define     FAILURE     0
 #define     RESET       0
 #define     HOURS       0                           //time array positions
@@ -28,8 +30,18 @@
 #define     SECONDS_MINUTES_LIMIT   60
 #define     HOURS_LIMIT     24
 #define     TWO_DIGITS      10                          //two digit number musn't be formatted
-
-#define     BOUNDARY_CHECK(X,Y) (RESET<=X<Y)            //check time or date value is within boundaries
+#define     FORBIDDEN       100
+#define     OUTPUT_STRING   20 //for printing date and time strings, with padding to be safe
+#define     EMPTY       0
+#define     FULL        0
+#define     UART        0
+#define     SYSTICK     1
+#define     COMMAND_PROMPT  "\n\r>"
+#define     INVALID_PROMPT  "\n\r?"
+#define     BACKSPACE       "\b \b"
+            //check time or date value is within boundaries
+#define     BOUNDARY_CHECK(X,Y) (RESET<=X<Y)
+            /*if value exceeds limit, reset and call function*/
 #define     UPDATE(VAL,LIM,FUNC) VAL = (VAL<LIM) ? VAL+1 : RESET;\
                                              if(!(VAL)){FUNC;}
 
@@ -42,7 +54,7 @@
     extern void spaceFilter(char*);
     extern int myAtoi(int *, char*);
     extern int parseClock(char*,int*);
-    extern void printTime(int * );
+    extern void printTime(const int *);
 
 #else
 
@@ -52,6 +64,6 @@
     int myAtoi(int *, char*);
     int parseClock(char*,int*);
     void formatTime(int, char*);
-    void printTime(int *);
+    void printTime(const int *);
 
 #endif /* UTILITIES */

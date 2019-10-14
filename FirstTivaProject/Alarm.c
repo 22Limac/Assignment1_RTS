@@ -1,6 +1,6 @@
 /*
  * @file    Alarm.c
- * @brief   Contains all significant Alarm setting, updating and clearing functionality,
+ * @brief   Contains all Alarm setting, updating and clearing functionality,
  *          including argument processing, output string formatting and validity checking.
  *          Initializes the alarmState structure and updates it when called from Time.c module
  *          Contains constant definitions only required by this module.
@@ -24,10 +24,11 @@
 
 #define     TENTHS_IN_MINUTE    (TENTHS_IN_SECOND*SECONDS_IN_MINUTE)
 #define     TENTHS_IN_HOUR      (TENTHS_IN_MINUTE*MINUTES_IN_HOUR)
-//initialize alarmState structure
-alarm alarmState = {0,0};
+/*initialize alarmState structure*/
+static alarm alarmState = {FALSE, RESET};
 
-const int timeAddingConstants[PRECISION-1] =
+/* Hours handled differently than other time values*/
+static const int timeAddingConstants[PRECISION-1] =
 {MINUTES_IN_HOUR,SECONDS_IN_MINUTE,TENTHS_IN_SECOND};
 
 /*
@@ -47,7 +48,8 @@ const int timeAddingConstants[PRECISION-1] =
 int setAlarm(char* cmd)
 {
     int valid = TRUE;
-    int tmpAlarm[PRECISION] = {0,0,0,0};
+    /*set to forbidden so values that are set to zero are skipped in parseClock*/
+    int tmpAlarm[PRECISION] = {FORBIDDEN,FORBIDDEN,FORBIDDEN,FORBIDDEN};
 
     spaceFilter(cmd);                        //get rid of white space; stated in specifications
 /*  if:
@@ -57,7 +59,7 @@ int setAlarm(char* cmd)
     if(!*cmd)
     {
         alarmState.enabled = FALSE;
-        printString("Alarm cleared");
+        printString("\n\rAlarm cleared");
         return valid;
     }
     /* check all values are:
@@ -94,9 +96,21 @@ void setTenthsRemaining(int * alarmTime)
                     alarmTime[HOURS]*TENTHS_IN_HOUR;
 }
 
+/*
+ * @brief   adds the alarm time to current time and prints to screen
+ * @param   [in] int* alarmTime: digital time in array
+ * @details the alarm parameter is the time from current time that the
+ *          user desires an alarm to go off. This shows what time the alarm
+ *          will go off
+ */
 void printAlarmTime(int* alarmTime)
 {
     int i;
+    const int* time = getTime();
+
+    /*      PRECISION-1 because were starting
+     *      at tenths and decrementing
+     */
     for(i=PRECISION-1;HOURS<i;i--)
     {
          alarmTime[i] += time[i];
@@ -105,13 +119,20 @@ void printAlarmTime(int* alarmTime)
              alarmTime[i]-=timeAddingConstants[i-1];
              alarmTime[i+1]++;
          }
-         alarmTime[HOURS] += time[HOURS];
-         alarmTime[HOURS] = alarmTime[HOURS]%HOURS_IN_DAY;
     }
+
+    //handle hours differently because it doesn't have to carry
+    alarmTime[HOURS] += time[HOURS];
+    alarmTime[HOURS] = alarmTime[HOURS]%HOURS_IN_DAY;
     printString("\n\rAlarm set for: ");
     printTime(alarmTime);
 }
 
+/*
+ * @brief   Decrements alarm, checks if alarm is up
+ * @details If alarm is enabled, decrement remainingTenths, if
+ *          remainingTenths is 0, disable alarm, print to screen.
+ */
 void alarmCheck(void)
 {
     if(alarmState.enabled)
@@ -120,9 +141,14 @@ void alarmCheck(void)
          if(alarmState.remainingTenths<=RESET)
          {
              alarmState.enabled = FALSE;
-             printString("\n\rALARM *");
-             printTime(time);
-             printString(" *\n\r>");
+             printString("\n\rALARM * ");
+             printTime(getTime());
+             printString(" *");
+     /*     Need to print the command arrow
+      *     because called from ISR not process
+      *     function in main
+      */
+             printString(COMMAND_PROMPT);
          }
    }
 }

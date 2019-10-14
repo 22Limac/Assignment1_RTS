@@ -1,13 +1,14 @@
 /*
- * UART.h
- *
- *  Created on: Sep 23, 2019
- *      Author: Liam MacDonald
+ * @file    UART.h
+ * @details UART Constant Register Declarations
+ *          UART constants
+ *          UART Function Prototypes
+ * @author  Liam JA MacDonald
+ * @date    23-Sep-2019 (created)
+ * @date    10-Oct-2019 (modified)
  */
 #pragma once
-#include "InterruptType.h"
 
-#define UART 0
 #define GPIO_PORTA_AFSEL_R  (*((volatile unsigned long *)0x40058420))   // GPIOA Alternate Function Select Register
 #define GPIO_PORTA_DEN_R    (*((volatile unsigned long *)0x4005851C))   // GPIOA Digital Enable Register
 #define GPIO_PORTA_PCTL_R   (*((volatile unsigned long *)0x4005852C))   // GPIOA Port Control Register
@@ -33,7 +34,6 @@
 #define UART_CTL_UARTEN         0x00000301  // UART RX/TX Enable
 #define UART_INT_TX             0x020       // Transmit Interrupt Mask
 #define UART_INT_RX             0x010       // Receive Interrupt Mask
-#define UART_INT_EOT            0x800       //End of transmission interrupt
 #define UART_INT_RT             0x040       // Receive Timeout Interrupt Mask
 #define UART_CTL_EOT            0x00000010  // UART End of Transmission Enable
 #define EN_RX_PA0               0x00000001  // Enable Receive Function on PA0
@@ -57,9 +57,6 @@
 #define NVIC_EN0_R      (*((volatile unsigned long *)0xE000E100))   // Interrupt 0-31 Set Enable Register
 #define NVIC_EN1_R      (*((volatile unsigned long *)0xE000E104))   // Interrupt 32-54 Set Enable Register
 
-#define TRUE    1
-#define FALSE   0
-
 #ifndef GLOBAL_UART
 #define GLOBAL_UART
 
@@ -72,10 +69,6 @@
 
 #else
 
-    void UART0_Init(void);
-    void InterruptEnable(unsigned long);
-    void UART0_IntEnable(unsigned long);
-    void UART0_IntHandler(void);
     void forceOutput(char);
 
 #endif// GLOBAL_UART

@@ -1,7 +1,7 @@
 /*
  * @file    Time.c
- * @brief   Contains all significant time setting, updating and displaying functionality.
- *          including argument processing, output string formatting and validity checking.
+ * @brief   Contains all time setting, updating and displaying functionality.
+ *          Including argument processing, output string formatting and validity checking.
  *          Contains constant definitions only required by this module.
  * @author  Liam JA MacDonald
  * @date    23-Sep-2019 (created)
@@ -24,7 +24,7 @@
 
 
 
-int time[PRECISION] = {RESET,RESET,RESET,RESET}; // used for storing current time
+static int time[PRECISION] = {RESET,RESET,RESET,RESET}; // used for storing current time
 
 /*
  * @brief   Increments tenths of a second time value
@@ -46,7 +46,7 @@ void updateTenths(void)
  *          the time array. If it's exceeded it's max
  *          value updateMinutes function is called.
  */
-void updateSeconds(void)
+inline void updateSeconds(void)
 {
     UPDATE(time[SECONDS],SECONDS_MINUTES_UPDATE_LIMIT,updateMinutes())
 }
@@ -57,7 +57,7 @@ void updateSeconds(void)
  *          the time array. If it's exceeded it's max
  *          value updateHours function is called.
  */
-void updateMinutes(void)
+inline void updateMinutes(void)
 {
     UPDATE(time[MINUTES],SECONDS_MINUTES_UPDATE_LIMIT,updateHours())
 }
@@ -67,7 +67,7 @@ void updateMinutes(void)
  *          the time array. If it's exceeded it's max
  *          value updateDays function is called.
  */
-void updateHours(void)
+inline void updateHours(void)
 {
     UPDATE(time[HOURS],HOURS_UPDATE_LIMIT,updateDay())
 }
@@ -88,7 +88,8 @@ void updateHours(void)
 int setTime(char* cmd)
 {
     int valid = TRUE;
-    int tmpTime[PRECISION] = {RESET,RESET,RESET,RESET};
+    /*set to forbidden so values that are set to zero are skipped in parseClock*/
+    int tmpTime[PRECISION] = {FORBIDDEN,FORBIDDEN,FORBIDDEN,FORBIDDEN};
 
     spaceFilter(cmd);                               //get rid of white space; stated in specifications
 /*  if:
@@ -112,9 +113,15 @@ int setTime(char* cmd)
         int i;
         for(i=0;i<PRECISION;i++){time[i]=tmpTime[i];}
     }
+
     printString("\n\r");
     printTime(time);
     return valid;
+}
+
+const int* getTime(void)
+{
+    return time;
 }
 
 
