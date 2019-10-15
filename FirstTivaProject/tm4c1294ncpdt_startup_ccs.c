@@ -21,7 +21,15 @@
 // DAMAGES, FOR ANY REASON WHATSOEVER.
 //
 //*****************************************************************************
-
+/*
+ * @file    tmc4c1294ncpdt_startup_ccs.c
+ * @brief   Defines the Nested Vector Interrupt Table
+ *          The modification from original:
+ *          UART and SysTick handler where added to the Vector Table
+ * @author  Liam JA MacDonald (Edited) Texas Instruments Incorporated (created)
+ * @date    23-Sep-2019 (created)
+ * @date    23-Sep-2019 (modified)
+ */
 #include <stdint.h>
 
 //*****************************************************************************

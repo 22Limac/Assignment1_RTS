@@ -3,8 +3,8 @@
  * @brief   Defines interrupt queues
  *          Contains enqueue and dequeue functionality
  * @author  Liam JA MacDonald
- * @date    23-Sep-2019
- * @date    10-Oct-2019
+ * @date    23-Sep-2019 (Created)
+ * @date    10-Oct-2019 (Modified)
  */
 #include <string.h>
 #define GLOBAL_QUEUES

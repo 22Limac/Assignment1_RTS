@@ -106,7 +106,7 @@ int setDate(char* cmd)
     {
         valid = (sscanf(cmd,"%2d-%3s-%4d",&tmpDay,monthStr,&tmpYear)==VALID_DATE) ?
                  checkDate(tmpYear, monthNumber(monthStr),tmpDay) : FALSE;
-        if(!(valid)){return valid;}
+        if(!(valid)){return FAILURE;}
     }
     char tmp[OUTPUT_STRING];
     sprintf(tmp,"\n\r%d-%3s-%d",currentDate.day,monthStrings[currentDate.month],currentDate.year);
@@ -142,7 +142,7 @@ int checkDate(int year, int month, int day)
 {
     int valid = (BOUNDARY_CHECK(year, MAX_YEAR)&&
                  BOUNDARY_CHECK(month,MONTHS_IN_YEAR)&&
-                 (RESET_DAY<=day<daysInMonth[month][LEAPYEAR(year)]));
+                 ((RESET_DAY<=day)&&(day<=daysInMonth[month][LEAPYEAR(year)])));
     if(valid)
     {
         currentDate.month = month;

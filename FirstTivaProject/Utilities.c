@@ -56,7 +56,7 @@ void spaceFilter(char* str) {
         const char* tmp = str;
         do
         {
-            while (*tmp == ' '){++tmp;}
+            while ((*tmp == ' ')||(*tmp == '\t')){++tmp;}
             *str++ = *tmp++;
         }
         while(*str);

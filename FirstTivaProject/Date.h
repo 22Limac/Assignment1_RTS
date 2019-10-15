@@ -1,9 +1,9 @@
 /*
- * @file    Alarm.h
+ * @file    Date.h
  * @details Contains all alarm function prototypes
- *          and the alarm structure definition
+ *          and the Date structure definition
  *          Uses header guards so extern definitions
- *          aren't used in Alarm.c module
+ *          aren't used in Date.c module
  * @author  Liam JA MacDonald
  * @date    2-Oct-2019 (Created)
  * @date    9-Oct-2019 (Last Modified)

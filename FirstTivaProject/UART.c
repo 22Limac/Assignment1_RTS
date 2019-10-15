@@ -106,10 +106,10 @@ void UART0_IntHandler(void)
         Data.data = UART0_DR_R;
         enqueue(INPUT,Data);
     }
-
+    UART0_ICR_R |= UART_INT_TX;
     if(dequeue(OUTPUT, &Data))
     {
         forceOutput(Data.data);
     }
-    UART0_ICR_R |= UART_INT_TX;
+
 }

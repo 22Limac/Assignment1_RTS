@@ -25,9 +25,10 @@
  *          through interruptType inData variable.
  *
  * @detail  UART (0) interrupt:
- *          the inData data character is by default enqueued
- *          into the output interrupt queue to be echoed to the
- *          terminal, then added to the holding buffer.
+ *          the inData data character is by default added to the holding
+ *          buffer, then enqueued into the output interrupt
+ *          queue to be echoed to the terminal if the holding buffer
+ *          isn't full.
  *          If the data character is ENTER (0x0d) the head of
  *          the holding buffer is passed to cmd pointer and passed
  *          to the process function in the CommandTable.c module.

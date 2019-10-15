@@ -21,6 +21,7 @@
 #define     SECONDS_IN_MINUTE   60
 #define     MINUTES_IN_HOUR     60
 #define     HOURS_IN_DAY        24
+#define     ALARM_TRIGGER       0
 
 #define     TENTHS_IN_MINUTE    (TENTHS_IN_SECOND*SECONDS_IN_MINUTE)
 #define     TENTHS_IN_HOUR      (TENTHS_IN_MINUTE*MINUTES_IN_HOUR)
@@ -72,11 +73,12 @@ int setAlarm(char* cmd)
                 BOUNDARY_CHECK(tmpAlarm[MINUTES],SECONDS_MINUTES_LIMIT)&&
                 BOUNDARY_CHECK(tmpAlarm[HOURS],HOURS_LIMIT));
 
-    if(!(valid)){return valid;}//return if not valid
-
-    alarmState.enabled = TRUE; //alarm enabled
-    setTenthsRemaining(tmpAlarm);// time in value of tenths of a second
-    printAlarmTime(tmpAlarm);// print to screen
+    if(valid)
+    {
+        alarmState.enabled = TRUE; //alarm enabled
+        setTenthsRemaining(tmpAlarm);// time in value of tenths of a second
+        printAlarmTime(tmpAlarm);// print to screen
+    }
     return valid;
 }
 
@@ -138,7 +140,7 @@ void alarmCheck(void)
     if(alarmState.enabled)
     {
          alarmState.remainingTenths--;
-         if(alarmState.remainingTenths<=RESET)
+         if(alarmState.remainingTenths<=ALARM_TRIGGER)
          {
              alarmState.enabled = FALSE;
              printString("\n\rALARM * ");

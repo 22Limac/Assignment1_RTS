@@ -88,7 +88,7 @@ inline void updateHours(void)
 int setTime(char* cmd)
 {
     int valid = TRUE;
-    /*set to forbidden so values that are set to zero are skipped in parseClock*/
+    /*set to forbidden so values that are set to zero by emptyFilter are skipped in parseClock*/
     int tmpTime[PRECISION] = {FORBIDDEN,FORBIDDEN,FORBIDDEN,FORBIDDEN};
 
     spaceFilter(cmd);                               //get rid of white space; stated in specifications
@@ -108,7 +108,7 @@ int setTime(char* cmd)
                 BOUNDARY_CHECK(tmpTime[MINUTES],SECONDS_MINUTES_LIMIT)&&
                 BOUNDARY_CHECK(tmpTime[HOURS],HOURS_LIMIT));
 
-        if(!(valid)){return valid;}
+        if(!(valid)){return FAILURE;}
         //validity criteria met; set time
         int i;
         for(i=0;i<PRECISION;i++){time[i]=tmpTime[i];}
